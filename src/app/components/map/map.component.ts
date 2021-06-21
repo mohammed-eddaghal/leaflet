@@ -11,6 +11,17 @@ export class MapComponent implements OnInit {
   private map: L.Map;
   private centroid: L.LatLngExpression = [34.01908140063287, -6.849192298632323]; //
 
+  // retrieve from https://gist.github.com/ThomasG77/61fa02b35abf4b971390
+  smallIcon = new L.Icon({
+    iconUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
+    iconRetinaUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
+    iconSize:    [35, 40],
+    iconAnchor:  [12, 40],
+    popupAnchor: [3, -40],
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize:  [41, 41]
+  }); 
+
   private listMarkers = [{
     latitude: 34.01908140063287,
     langitud: -6.849192298632323,
@@ -71,15 +82,16 @@ export class MapComponent implements OnInit {
     //this.addMarker1([y,x]);
 
     for (let i = 0; i < this.listMarkers.length; i++) {
-      this.addMarker(this.listMarkers[i].latitude,this.listMarkers[i].langitud);
+      this.addMarker(this.listMarkers[i].latitude,this.listMarkers[i].langitud,i);
     }
     tiles.addTo(this.map);
 
   }
 
-  addMarker(lat, lang){
-    const marker = L.marker([lat, lang]);
+  addMarker(lat, lang, x){
+    const marker = L.marker([lat, lang], { icon: this.smallIcon });
     marker.addTo(this.map);
+    marker.bindPopup("<b>Hello world!</b><br>I am a popup "+x+" .");
   }
   addMarker1(latlang){
     const marker = L.marker(latlang);
