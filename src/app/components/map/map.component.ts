@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-map',
@@ -85,6 +86,13 @@ export class MapComponent implements OnInit {
       this.addMarker(this.listMarkers[i].latitude,this.listMarkers[i].langitud,i);
     }
     tiles.addTo(this.map);
+
+    L.Routing.control({
+      waypoints: [
+        L.latLng(this.listMarkers[0].latitude,this.listMarkers[0].langitud),
+        L.latLng(this.listMarkers[4].latitude,this.listMarkers[4].langitud)
+      ]
+    }).addTo(this.map);
 
   }
 
