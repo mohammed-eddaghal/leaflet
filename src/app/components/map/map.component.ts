@@ -1,3 +1,4 @@
+import { poubelle } from 'src/app/poubelle/model/poubelle.model';
 import { style } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
@@ -58,6 +59,56 @@ export class MapComponent implements OnInit {
     name: 'P6'
   }];
 
+
+  chargeList(listMarkers) : poubelle[]{
+
+    let listPoubelle = [];
+    let poubel : poubelle ;
+  
+    console.log( "liste" + listMarkers[1].id);
+
+    for (let i = 0; i < listMarkers.length; i++) {
+
+      let poubel = new poubelle(listMarkers[i].id, listMarkers[i].latitude, listMarkers[i].langitud, listMarkers[i].nivRemp, listMarkers[i].name) ;
+      listPoubelle.push(poubel);
+    }
+    
+    return listPoubelle;
+  }
+
+  // return la liste des poubelle a vider 
+  ListePoubelleVider(listeP: poubelle[], tailleCamion: number) : poubelle[]{
+    
+    let listPoubelle = [];
+
+    // Trie la liste des poubelle selon le niveau de remplissage 
+    listeP.sort(function compare(a, b) {
+      if (a.getNivRemp < b.getNivRemp)
+         return 1;
+      if (a.getNivRemp > b.getNivRemp )
+         return -1;
+      return 0;
+    });
+
+    for (let i = 0; i < listeP.length; i++) {
+      
+      if(listeP[i].getNivRemp <= tailleCamion){
+        // Gareder la poubelle 
+        listPoubelle.push(listeP[i]);
+
+        // Retirez la taille de la poubelle de la taille du camion
+        tailleCamion = tailleCamion - listeP[i].getNivRemp
+      }
+      else{
+        // Gareder la poubelle 
+        listPoubelle.push(listeP[i]);
+        break;
+      }
+    }
+    
+    return listPoubelle;
+  }
+
   private initMap(): void {
     this.map = L.map('map', {
       center: this.centroid,
@@ -70,55 +121,28 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    // create 5 random jitteries and add them to map
-    /*const jittery = Array(5).fill(this.centroid).map(
-        x => [x[0] + (Math.random() - .5)/10, x[1] + (Math.random() - .5)/10 ]
-      ).map(
-        x => L.marker(x as L.LatLngExpression)
-      ).forEach(
-        x => x.addTo(this.map)
-      );*/
-
-
-
-    //const x=this.listMarkers[1].latitude; const y=  this.listMarkers[1].langitud;
-    console.log(this.listMarkers[1].latitude + ',' + this.listMarkers[1].langitud);
-    /*const testMakrker: L.LatLngExpression = [this.listMarkers[1].latitude, this.listMarkers[1].langitud];
-    const x = L.marker(this.centroid);
-    const y = L.marker(testMakrker);
-    y.addTo(this.map);
-    x.addTo(this.map);*/
-    //this.addMarker1([y,x]);
-
     for (let i = 0; i < this.listMarkers.length; i++) {
       this.addMarker(this.listMarkers[i].latitude,this.listMarkers[i].langitud,i);
     }
     tiles.addTo(this.map);
 
-    L.Routing.control({
-      
-      waypoints: [
-        L.latLng(this.listMarkers[0].latitude,this.listMarkers[0].langitud),
-        L.latLng(this.listMarkers[4].latitude,this.listMarkers[4].langitud)
-      ],
+    var listPoubelle1 = [];
+    listPoubelle1 = this.chargeList(this.listMarkers) ;
+    
+    console.log("la liste des poubelle  ");
+    for( let i=0; i<listPoubelle1.length ; i++ ){
+      console.log(listPoubelle1[i]);
+    }
 
-    }).addTo(this.map);
+    console.log("\n ************************ \n");
 
-    L.Routing.control({
-      router: L.Routing.osrmv1({
-          serviceUrl: `http://router.project-osrm.org/route/v1/`
-      }),
-      showAlternatives: true,
-      //lineOptions: {styles: [{color: '#242c81', weight: 7}]},
-      fitSelectedRoutes: false,
-      //altLineOptions: {styles: [{color: '#ed6852', weight: 7}]},
-      show: false,
-      routeWhileDragging: true,
-      waypoints: [
-        L.latLng(this.listMarkers[4].latitude,this.listMarkers[4].langitud),
-        L.latLng(this.listMarkers[1].latitude,this.listMarkers[1].langitud)
-      ]
-  }).addTo(this.map);
+    var listPoubelle = [];
+    listPoubelle = this.ListePoubelleVider(listPoubelle1, 220) ;
+    
+    console.log("la liste des poubelle a vider ");
+    for( let i=0; i<listPoubelle.length ; i++ ){
+      console.log(listPoubelle[i]);
+    }
 
   }
 
