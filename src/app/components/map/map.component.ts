@@ -13,11 +13,11 @@ import 'leaflet-routing-machine';
 export class MapComponent implements OnInit {
 
   private map: L.Map;
-  private  routes;
-  private camionPos: L.LatLngExpression = [34.02160888075479, -6.853381776506305];
-  private centroid: L.LatLngExpression = [34.01908140063287, -6.849192298632323]; //
 
-    icongarbege = new L.Icon({
+  private camionPos: L.LatLngExpression = [34.02160888075479, -6.853381776506305];
+  private centroid: L.LatLngExpression = [34.01908140063287, -6.849192298632323]; 
+
+  icongarbege = new L.Icon({
     iconUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
     iconRetinaUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
     iconSize:    [35, 40],
@@ -29,7 +29,7 @@ export class MapComponent implements OnInit {
 
   iconCamion = new L.Icon({
     iconUrl: '/assets/16348.png',
-    iconRetinaUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
+    iconRetinaUrl: '/assets/16348.png',
     iconSize:    [35, 40],
     iconAnchor:  [12, 40],
     popupAnchor: [3, -40],
@@ -70,7 +70,7 @@ export class MapComponent implements OnInit {
     name: 'P6'
   }];
 
-  //Charger la la liste des 
+  //Charger la la liste des poubelle 
   chargeList(listMarkers) : poubelle[]{
 
     let listPoubelle = [];
@@ -117,8 +117,6 @@ export class MapComponent implements OnInit {
     return listPoubelle;
   }
 
-  //listGarbege = [3, 6, 5, 1];
-  listGarbege = [3, 6, 5, 2];
   private initMap(): void {
     this.map = L.map('map', {
       center: this.centroid,
@@ -131,121 +129,110 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
-    console.log(this.listMarkers[1].latitude + ',' + this.listMarkers[1].langitud);
+    // Afficher la liste des poubelle
+    var listPoubelle = [];
+    listPoubelle = this.chargeList(this.listMarkers) ;
+    
+    // Afficher la liste des poubelle a vider
+    var listGarbege = [];
+    listGarbege = this.ListePoubelleVider(listPoubelle, 220) ;
 
-    const marker = L.marker(this.camionPos, { icon: this.iconCamion });
+    //Ajouter le markeur de camion 
+    const marker = L.marker([34.02160888075479, -6.853381776506305], { icon: this.iconCamion });
     marker.addTo(this.map);
     marker.bindPopup('camion test');
 
-    for (let i = 0; i < this.listMarkers.length; i++) {
-      this.addMarker(this.listMarkers[i].latitude, this.listMarkers[i].langitud, i, this.icongarbege);
-
-
-    // Afficher la liste des poubelle
-    var listPoubelle1 = [];
-    listPoubelle1 = this.chargeList(this.listMarkers) ;
-    
-    console.log("la liste des poubelle ");
-    for( let i=0; i<listPoubelle1.length ; i++ ){
-      console.log(listPoubelle1[i]);
+    //Dessiner les poubelle sur la carte 
+    for (let i = 0; i < listPoubelle.length; i++) {
+      this.addMarker(listPoubelle[i], this.icongarbege);
     }
 
-    // Afficher la liste des poubelle a vider
-    var listPoubelle = [];
-    listPoubelle = this.ListePoubelleVider(listPoubelle1, 220) ;
-    
-    console.log("la liste des poubelle a vider ");
+    //Dessiner le trajet
+    this.drawTrajet(listGarbege, this.camionPos);
 
-    
-    for( let i=0; i<listPoubelle.length ; i++ ){
-      console.log(listPoubelle[i]);
-    }
-      this.getDistance(L.latLng(this.camionPos[0], this.camionPos[1]),
-        L.latLng(this.listMarkers[i].latitude, this.listMarkers[i].langitud));
-      }
-
-    /*const xx = L.Routing.control({
-      waypoints: [
-        L.latLng(this.camionPos[0], this.camionPos[1]),
-        L.latLng(this.listMarkers[1].latitude, this.listMarkers[1].langitud)
-      ]
-    }).addTo(this.map);*/
-
-    console.log("////");
     tiles.addTo(this.map);
-
-    this.drawTrajet(this.listGarbege, this.camionPos);
   }
 
-  // tslint:disable-next-line:typedef
-  addMarker(lat, lang, x, smallIcon){
-    const marker = L.marker([lat, lang], { icon: smallIcon });
+  // Ajouter une markeur a la carte
+  addMarker(poubel: poubelle, icongarbege){
+    const marker = L.marker([poubel.getLatitude, poubel.getLangitud], { icon: icongarbege });
     marker.addTo(this.map);
-    marker.bindPopup(this.listMarkers[x].name +
-                      '</br>Taux de remplisage :<b>' +
-                      this.listMarkers[x].nivRemp + ' %</b>');
+    marker.bindPopup(poubel.getName + '</br>Taux de remplisage :<b>' + poubel.getNivRemp + ' %</b>');
   }
 
-  // tslint:disable-next-line:typedef
+  //Calculer la distance entre deux position
   getDistance(from, to) {
-    console.log('la distance est :' + from.distanceTo(to));
-
     return from.distanceTo(to);
   }
 
-  // tslint:disable-next-line:typedef
-  drawTrajet(listMarkersTodraw, locationCamio){
+  //Fonction qui dessine le trajer
+  drawTrajet(listMarkersTodraw :poubelle[], locationCamio){
+
     var locationCamioCourant = locationCamio;
     var listMarkersRestant = listMarkersTodraw;
-    var index = 0;
-    var x=this.getDistance(L.latLng(this.listMarkers[listMarkersRestant[0] - 1].latitude, this.listMarkers[listMarkersRestant[0] - 1].langitud),
-      L.latLng(locationCamioCourant[0], locationCamioCourant[1]));
-    var idGarbege = listMarkersRestant[0];
 
-    console.log('la taille de table : '+listMarkersRestant.length);
-    if(listMarkersRestant.length !=1) {
-      for (let i = 0; i < listMarkersRestant.length; i++) {
-        console.log('--' + listMarkersRestant[i]);
-        let y = this.getDistance(L.latLng(this.listMarkers[listMarkersRestant[i] - 1].latitude, this.listMarkers[listMarkersRestant[i] - 1].langitud),
-          L.latLng(locationCamioCourant[0], locationCamioCourant[1]));
+    if(listMarkersRestant.length != 0){
+      //traitemen de dession
 
-        if (y < x) {
-          idGarbege = listMarkersRestant[i];
-          index = i;
+      //l'indice de la poubelle suivant
+      var index = 0;
+
+      var distanceMin = this.getDistance(L.latLng(listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud),
+        L.latLng(locationCamioCourant[0], locationCamioCourant[1])
+      );
+
+      var idGarbege = listMarkersRestant[index].getId;
+
+      if(listMarkersRestant.length !=1) {
+
+        //Recuperer la poubelle le plus proche
+        for (let i = 0; i < listMarkersRestant.length; i++) {
+          let distance = this.getDistance(L.latLng(listMarkersRestant[i].getLatitude, listMarkersRestant[i].getLangitud),
+            L.latLng(locationCamioCourant[0], locationCamioCourant[1]));
+
+          if (distance < distanceMin) {
+            distanceMin = distance ;
+            idGarbege = listMarkersRestant[i].getId;
+            index = i; 
+          }
         }
+
+        //Dessiner la lige entre la camion et le plus proche poubelle
+        const ligne = L.Routing.control({
+          
+          waypoints: [
+            L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
+            L.latLng(listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud)
+          ],
+          
+        }).addTo(this.map);
+        
+
+        //Positionner le camion sur la poubelle
+        locationCamioCourant = [listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud];
+
+        //Supprimer la poubelle traiter
+        listMarkersRestant.splice(index,1);
+      }else{
+
+        //Dessiner la ligne entre la camion et la seule poubelle dans le tableau
+        const ligne = L.Routing.control({
+          waypoints: [
+            L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
+            L.latLng(listMarkersRestant[0].getLatitude, listMarkersRestant[0].getLangitud)
+          ]
+        }).addTo(this.map);
+
+        //Positionner le camion sur la poubelle
+        locationCamioCourant = [listMarkersRestant[0].getLatitude, listMarkersRestant[0].getLangitud];
+
+        //Supprimer la poubelle traiter
+        listMarkersRestant.splice(index);
       }
 
-      const xx = L.Routing.control({
-        waypoints: [
-          L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
-          L.latLng(this.listMarkers[idGarbege - 1].latitude, this.listMarkers[idGarbege - 1].langitud)
-        ]
-      });
-      xx.addTo(this.map);
-
-      console.log(idGarbege);
-
-      listMarkersRestant.splice(index);
-      locationCamioCourant = [this.listMarkers[idGarbege - 1].latitude, this.listMarkers[idGarbege - 1].langitud];
-    }else{
-      const xx = L.Routing.control({
-        waypoints: [
-          L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
-          L.latLng(this.listMarkers[idGarbege - 1].latitude, this.listMarkers[idGarbege - 1].langitud)
-        ]
-      });
-      xx.addTo(this.map);
-
-      console.log(idGarbege);
-
-      listMarkersRestant.splice(index);
-      locationCamioCourant = [this.listMarkers[idGarbege - 1].latitude, this.listMarkers[idGarbege - 1].langitud];
-
-    }
-    while (listMarkersRestant.length != 0){
+      //Appell methode
       this.drawTrajet(listMarkersRestant, locationCamioCourant);
     }
-
   }
 
   constructor() { }
