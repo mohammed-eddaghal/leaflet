@@ -59,13 +59,10 @@ export class MapComponent implements OnInit {
     name: 'P6'
   }];
 
-
+  //Charger la la liste des 
   chargeList(listMarkers) : poubelle[]{
 
     let listPoubelle = [];
-    let poubel : poubelle ;
-  
-    console.log( "liste" + listMarkers[1].id);
 
     for (let i = 0; i < listMarkers.length; i++) {
 
@@ -126,16 +123,17 @@ export class MapComponent implements OnInit {
     }
     tiles.addTo(this.map);
 
+
+    // Afficher la liste des poubelle
     var listPoubelle1 = [];
     listPoubelle1 = this.chargeList(this.listMarkers) ;
     
-    console.log("la liste des poubelle  ");
+    console.log("la liste des poubelle ");
     for( let i=0; i<listPoubelle1.length ; i++ ){
       console.log(listPoubelle1[i]);
     }
 
-    console.log("\n ************************ \n");
-
+    // Afficher la liste des poubelle a vider
     var listPoubelle = [];
     listPoubelle = this.ListePoubelleVider(listPoubelle1, 220) ;
     
