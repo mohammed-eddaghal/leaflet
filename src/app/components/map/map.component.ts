@@ -24,7 +24,7 @@ export class MapComponent implements OnInit {
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     shadowSize:  [41, 41]
   });
-
+  
   private listMarkers = [{
     id: 1,
     latitude: 34.01908140063287,
@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
       show: false,
       routeWhileDragging: true,
       waypoints: [
-        L.latLng(this.listMarkers[2].latitude,this.listMarkers[2].langitud),
+        L.latLng(this.listMarkers[4].latitude,this.listMarkers[4].langitud),
         L.latLng(this.listMarkers[1].latitude,this.listMarkers[1].langitud)
       ]
   }).addTo(this.map);
