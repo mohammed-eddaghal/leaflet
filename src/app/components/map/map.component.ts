@@ -23,30 +23,36 @@ export class MapComponent implements OnInit {
     popupAnchor: [3, -40],
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     shadowSize:  [41, 41]
-  }); 
+  });
 
   private listMarkers = [{
+    id: 1,
     latitude: 34.01908140063287,
     langitud: -6.849192298632323,
     nivRemp: 75,
     name: 'P1'
   }, {
+    id: 2,
     latitude: 34.02036268534806, langitud: -6.844374344755213,
     nivRemp: 30,
     name: 'P2'
   }, {
+    id: 3,
     latitude: 34.02132363619184, langitud:-6.845276100828468,
     nivRemp: 40,
     name: 'P3'
   }, {
+    id: 4,
     latitude: 34.02190020147593, langitud:-6.84476081164375,
     nivRemp: 55,
     name: 'P4'
   },{
+    id: 5,
     latitude: 34.022099742205995, langitud:-6.846452503011824,
     nivRemp: 15,
     name: 'P5'
   },{
+    id: 6,
     latitude: 34.022917829245564, langitud:-6.846109180280347,
     nivRemp: 70,
     name: 'P6'
