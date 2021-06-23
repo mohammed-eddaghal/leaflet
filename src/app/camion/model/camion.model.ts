@@ -1,20 +1,28 @@
-export class camion{
-    private id : number ;
-    private Rem : number ;
+export class camion {
 
-    get getId(){
-        return this.id ;
+    private id: number;
+    private Remp: number;
+  
+    constructor(id: number, Remp: number) {
+      this.id = id;
+      this.Remp = Remp;
     }
 
-    set setId(id){
-        this.id = id ;
+    
+    get getId() {
+        return this.id;
     }
 
-    get getRem(){
-        return this.id ;
+    set set(id) {
+        this.id = id;
     }
 
-    set setRem(rem){
-        this.Rem = rem ;
+    get getRemp() {
+        return this.Remp;
     }
-}
+
+    set setRemp(Remp) {
+        this.Remp = Remp;
+    }
+
+  }

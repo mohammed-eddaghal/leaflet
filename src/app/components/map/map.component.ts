@@ -36,6 +36,7 @@ export class MapComponent implements OnInit {
     tiles.addTo(this.map);
 
     let po : poubelle[] ;
+    let poubel = new poubelle(1,45);
     po.push();
   
   }
