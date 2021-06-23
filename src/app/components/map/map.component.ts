@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
+import { poubelle } from 'src/app/poubelle/model/poubelle.model';
 
 @Component({
   selector: 'app-map',
@@ -33,6 +34,9 @@ export class MapComponent implements OnInit {
       );
 
     tiles.addTo(this.map);
+
+    let po : poubelle[] ;
+    po.push();
   
   }
 
