@@ -5,8 +5,8 @@ export class poubelle {
     private latitude: number;
     private langitud: number;
     private nivRemp: number;
-     name: string;
-  
+    private name: string;
+
     constructor(id: number, latitude: number, langitud: number, nivRemp: number, name: string) {
       this.id = id;
       this.latitude = latitude;
@@ -19,8 +19,24 @@ export class poubelle {
         return this.id;
     }
 
-    set set(id) {
+    set setId(id) {
         this.id = id;
+    }
+
+    get getLatitude() {
+        return this.latitude;
+    }
+
+    set seTLatitude(latitude) {
+        this.latitude = latitude;
+    }
+
+    get getLangitud() {
+        return this.langitud;
+    }
+
+    set seTLangitud(langitud) {
+        this.langitud = langitud;
     }
 
     get getNivRemp() {
@@ -31,5 +47,12 @@ export class poubelle {
         this.nivRemp = nivRemp;
     }
 
+    get getName() {
+        return this.name;
+    }
+
+    set setName(name) {
+        this.name = name;
+    }
 
   }
