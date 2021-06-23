@@ -105,8 +105,6 @@ export class MapComponent implements OnInit {
         break;
       }
     }
-
-
     
     return listPoubelle;
   }
