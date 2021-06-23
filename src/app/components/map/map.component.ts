@@ -1,3 +1,4 @@
+import { style } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -7,6 +8,7 @@ import 'leaflet-routing-machine';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
+
 export class MapComponent implements OnInit {
 
   private map: L.Map;
@@ -88,11 +90,29 @@ export class MapComponent implements OnInit {
     tiles.addTo(this.map);
 
     L.Routing.control({
+      
       waypoints: [
         L.latLng(this.listMarkers[0].latitude,this.listMarkers[0].langitud),
         L.latLng(this.listMarkers[4].latitude,this.listMarkers[4].langitud)
-      ]
+      ],
+
     }).addTo(this.map);
+
+    L.Routing.control({
+      router: L.Routing.osrmv1({
+          serviceUrl: `http://router.project-osrm.org/route/v1/`
+      }),
+      showAlternatives: true,
+      //lineOptions: {styles: [{color: '#242c81', weight: 7}]},
+      fitSelectedRoutes: false,
+      //altLineOptions: {styles: [{color: '#ed6852', weight: 7}]},
+      show: false,
+      routeWhileDragging: true,
+      waypoints: [
+        L.latLng(this.listMarkers[2].latitude,this.listMarkers[2].langitud),
+        L.latLng(this.listMarkers[1].latitude,this.listMarkers[1].langitud)
+      ]
+  }).addTo(this.map);
 
   }
 
