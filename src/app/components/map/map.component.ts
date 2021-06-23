@@ -67,8 +67,8 @@ export class MapComponent implements OnInit {
     name: 'P6'
   }];
 
-  listGarbege = [3, 6, 5, 1];
-
+  //listGarbege = [3, 6, 5, 1];
+  listGarbege = [3, 6, 5, 2];
   private initMap(): void {
     this.map = L.map('map', {
       center: this.centroid,
@@ -93,6 +93,14 @@ export class MapComponent implements OnInit {
       this.getDistance(L.latLng(this.camionPos[0], this.camionPos[1]),
         L.latLng(this.listMarkers[i].latitude, this.listMarkers[i].langitud));
       }
+
+    /*const xx = L.Routing.control({
+      waypoints: [
+        L.latLng(this.camionPos[0], this.camionPos[1]),
+        L.latLng(this.listMarkers[1].latitude, this.listMarkers[1].langitud)
+      ]
+    }).addTo(this.map);*/
+
     console.log("////");
     tiles.addTo(this.map);
 
