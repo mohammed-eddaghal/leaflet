@@ -63,7 +63,7 @@ export class MapComponent implements OnInit {
   }, {
     id: 6,
     latitude: 34.022917829245564, langitud: -6.846109180280347,
-    nivRemp: 70,
+    nivRemp: 79,
     name: 'P6'
   }];
 
