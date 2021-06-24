@@ -3,6 +3,7 @@ import { style } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { camion } from 'src/app/camion/model/camion.model';
 
 @Component({
   selector: 'app-map',
@@ -14,7 +15,6 @@ export class MapComponent implements OnInit {
 
   private map: L.Map;
 
-  private camionPos: L.LatLngExpression = [34.02160888075479, -6.853381776506305];
   private centroid: L.LatLngExpression = [34.01908140063287, -6.849192298632323]; 
 
   icongarbege = new L.Icon({
@@ -41,7 +41,7 @@ export class MapComponent implements OnInit {
     id: 1,
     latitude: 34.01908140063287,
     langitud: -6.849192298632323,
-    nivRemp: 75,
+    nivRemp: 15,
     name: 'P1'
   }, {
     id: 2,
@@ -61,7 +61,7 @@ export class MapComponent implements OnInit {
   }, {
     id: 5,
     latitude: 34.022099742205995, langitud: -6.846452503011824,
-    nivRemp: 15,
+    nivRemp: 75,
     name: 'P5'
   }, {
     id: 6,
@@ -117,6 +117,11 @@ export class MapComponent implements OnInit {
     return listPoubelle;
   }
 
+  getCamion(): camion {
+    let c = new camion(0, 34.02160888075479, -6.853381776506305, 220) ;
+    return c ;
+  }
+
   private initMap(): void {
     this.map = L.map('map', {
       center: this.centroid,
@@ -129,16 +134,22 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    let camio = this.getCamion() ;
+    console.log("camion :" + camio.getRemp);
+
+    let camionPos = [34.02160888075479, -6.853381776506305];
+    console.log("camion position :" + camionPos[0] + " et " + camionPos[1]);
+
     // Afficher la liste des poubelle
     var listPoubelle = [];
     listPoubelle = this.chargeList(this.listMarkers) ;
     
     // Afficher la liste des poubelle a vider
     var listGarbege = [];
-    listGarbege = this.ListePoubelleVider(listPoubelle, 220) ;
+    listGarbege = this.ListePoubelleVider(listPoubelle, camio.getRemp) ;
 
     //Ajouter le markeur de camion 
-    const marker = L.marker([34.02160888075479, -6.853381776506305], { icon: this.iconCamion });
+    const marker = L.marker([camio.getLatitude, camio.getLangitud], { icon: this.iconCamion });
     marker.addTo(this.map);
     marker.bindPopup('camion test');
 
@@ -148,7 +159,7 @@ export class MapComponent implements OnInit {
     }
 
     //Dessiner le trajet
-    this.drawTrajet(listGarbege, this.camionPos);
+    this.drawTrajet(listGarbege, camionPos);
 
     tiles.addTo(this.map);
   }
@@ -221,6 +232,7 @@ export class MapComponent implements OnInit {
             L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
             L.latLng(listMarkersRestant[0].getLatitude, listMarkersRestant[0].getLangitud)
           ]
+          
         }).addTo(this.map);
 
         //Positionner le camion sur la poubelle
