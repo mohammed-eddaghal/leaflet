@@ -1,9 +1,10 @@
-import { poubelle } from 'src/app/poubelle/model/poubelle.model';
-import { style } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { camion } from 'src/app/camion/model/camion.model';
+import { poubelle } from 'src/app/poubelle/model/poubelle.model';
+import { style } from '@angular/animations';
+import { icon, Marker } from 'leaflet';
 
 @Component({
   selector: 'app-map',
@@ -12,6 +13,24 @@ import { camion } from 'src/app/camion/model/camion.model';
 })
 
 export class MapComponent implements OnInit {
+
+ChangerIconDefaultMarker(){
+  const iconRetinaUrl = 'assets/myicon.png';
+  const iconUrl = 'assets/myicon.png';
+  const shadowUrl = 'assets/myicon.png';
+  const iconDefault = icon({
+    iconRetinaUrl,
+    iconUrl,
+    shadowUrl,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+  Marker.prototype.options.icon = iconDefault;
+}
+
 
   private map: L.Map;
 
@@ -128,17 +147,20 @@ export class MapComponent implements OnInit {
       zoom: 16
     });
 
+    //Changer l'icon par defaut de marker
+    this.ChangerIconDefaultMarker() ;
+
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 22,
       minZoom: 14,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    //Recupper l'obeject camion
     let camio = this.getCamion() ;
-    console.log("camion :" + camio.getRemp);
 
-    let camionPos = [34.02160888075479, -6.853381776506305];
-    console.log("camion position :" + camionPos[0] + " et " + camionPos[1]);
+    //Recupper la position du camion
+    let camionPos = [camio.getLatitude, camio.getLangitud];
 
     // Afficher la liste des poubelle
     var listPoubelle = [];
@@ -239,7 +261,7 @@ export class MapComponent implements OnInit {
         locationCamioCourant = [listMarkersRestant[0].getLatitude, listMarkersRestant[0].getLangitud];
 
         //Supprimer la poubelle traiter
-        listMarkersRestant.splice(index);
+        listMarkersRestant.splice(index, 1);
       }
 
       //Appell methode
