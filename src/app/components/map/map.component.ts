@@ -4,7 +4,6 @@ import 'leaflet-routing-machine';
 import { camion } from 'src/app/camion/model/camion.model';
 import { poubelle } from 'src/app/poubelle/model/poubelle.model';
 import { style } from '@angular/animations';
-import { icon, Marker } from 'leaflet';
 
 @Component({
   selector: 'app-map',
@@ -14,45 +13,37 @@ import { icon, Marker } from 'leaflet';
 
 export class MapComponent implements OnInit {
 
-ChangerIconDefaultMarker(){
-  const iconRetinaUrl = 'assets/myicon.png';
-  const iconUrl = 'assets/myicon.png';
-  const shadowUrl = 'assets/myicon.png';
-  const iconDefault = icon({
-    iconRetinaUrl,
-    iconUrl,
-    shadowUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
-  });
-  Marker.prototype.options.icon = iconDefault;
-}
-
-
   private map: L.Map;
 
   private centroid: L.LatLngExpression = [34.01908140063287, -6.849192298632323]; 
 
   icongarbege = new L.Icon({
-    iconUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
-    iconRetinaUrl: 'https://image.flaticon.com/icons/png/512/684/684113.png',
+    iconUrl: 'assets/poubelle.png',
+    iconRetinaUrl: 'assets/poubelle.png',
     iconSize:    [35, 40],
     iconAnchor:  [12, 40],
     popupAnchor: [3, -40],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowUrl: 'assets/marker-shadow.png',
+    shadowSize:  [41, 41]
+  });
+
+  icongarbegeD = new L.Icon({
+    iconUrl: 'assets/poubelle-danger.png',
+    iconRetinaUrl: 'assets/poubelle-danger.png',
+    iconSize:    [35, 40],
+    iconAnchor:  [12, 40],
+    popupAnchor: [3, -40],
+    shadowUrl: 'assets/marker-shadow.png',
     shadowSize:  [41, 41]
   });
 
   iconCamion = new L.Icon({
-    iconUrl: '/assets/16348.png',
-    iconRetinaUrl: '/assets/16348.png',
+    iconUrl: 'assets/16348.png',
+    iconRetinaUrl: 'assets/16348.png',
     iconSize:    [35, 40],
     iconAnchor:  [12, 40],
     popupAnchor: [3, -40],
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowUrl: 'assets/marker-shadow.png',
     shadowSize:  [41, 41]
   });
 
@@ -147,9 +138,6 @@ ChangerIconDefaultMarker(){
       zoom: 16
     });
 
-    //Changer l'icon par defaut de marker
-    this.ChangerIconDefaultMarker() ;
-
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 22,
       minZoom: 14,
@@ -177,7 +165,7 @@ ChangerIconDefaultMarker(){
 
     //Dessiner les poubelle sur la carte 
     for (let i = 0; i < listPoubelle.length; i++) {
-      this.addMarker(listPoubelle[i], this.icongarbege);
+      this.addMarker(listPoubelle[i]);
     }
 
     //Dessiner le trajet
@@ -187,7 +175,12 @@ ChangerIconDefaultMarker(){
   }
 
   // Ajouter une markeur a la carte
-  addMarker(poubel: poubelle, icongarbege){
+  addMarker(poubel: poubelle){
+    let icongarbege ;
+    if(poubel.getNivRemp < 70)
+      { icongarbege = this.icongarbege ; }
+    else
+      { icongarbege = this.icongarbegeD ; }
     const marker = L.marker([poubel.getLatitude, poubel.getLangitud], { icon: icongarbege });
     marker.addTo(this.map);
     marker.bindPopup(poubel.getName + '</br>Taux de remplisage :<b>' + poubel.getNivRemp + ' %</b>');
@@ -237,6 +230,12 @@ ChangerIconDefaultMarker(){
             L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
             L.latLng(listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud)
           ],
+          plan: L.Routing.plan([
+            L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
+            L.latLng(listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud)
+          ], {
+            createMarker: function() { return null }
+          })
           
         }).addTo(this.map);
         
@@ -253,7 +252,13 @@ ChangerIconDefaultMarker(){
           waypoints: [
             L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
             L.latLng(listMarkersRestant[0].getLatitude, listMarkersRestant[0].getLangitud)
-          ]
+          ],
+          plan: L.Routing.plan([
+            L.latLng(locationCamioCourant[0], locationCamioCourant[1]),
+            L.latLng(listMarkersRestant[index].getLatitude, listMarkersRestant[index].getLangitud)
+          ], {
+            createMarker: function() { return null }
+          })
           
         }).addTo(this.map);
 
